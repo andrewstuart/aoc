@@ -2,12 +2,12 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
-	"github.com/samber/lo"
 )
 
 func main() {
@@ -36,16 +36,22 @@ func aoc(r io.Reader) int {
 	// Add challenge logic here probably
 	count := 0
 
-	for _, input := range inputs {
-		a, b := split(input)
-		s := ezaoc.SetFrom(a)
-		s2 := ezaoc.Set[rune]{}
-		for _, ch := range b {
-			if s.Contains(ch) {
-				s2.Add(ch)
+	groups := ezaoc.Reslice(inputs, ezaoc.ResliceGroupN[[]rune](3))
+	fmt.Printf("groups = %+v\n", groups)
+
+	for _, group := range groups {
+		s := ezaoc.SetFrom(group[0])
+		for _, g2 := range group[0:] {
+			s2 := ezaoc.Set[rune]{}
+			for _, ch := range g2 {
+				if s.Contains(ch) {
+					s2.Add(ch)
+				}
 			}
+			s = s2
 		}
-		count += ezaoc.Sum(lo.Map(s2.Items(), func(r rune, _ int) int { return pri(r) }))
+		count += ezaoc.Sum(ezaoc.FMap(s.Items(), pri))
+		fmt.Printf("string(s.Items()) = %+v\n", string(s.Items()))
 	}
 
 	return count

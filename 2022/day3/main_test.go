@@ -31,5 +31,5 @@ wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw`)
 
-	asrt.Equal(157, aoc(in))
+	asrt.Equal(70, aoc(in))
 }
