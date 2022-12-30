@@ -1,16 +1,16 @@
 package ezaoc
 
 // Reslice takes a slice of comparable types and turns it into a 2d slice
-func Reslice[T comparable, Ts ~[]T](ts Ts, delim T) []Ts {
+func Reslice[T comparable, Ts ~[]T](inputs Ts, delim T) []Ts {
 	var out []Ts
 	var curr Ts
-	for _, t := range ts {
-		if t == delim {
+	for _, in := range inputs {
+		if in == delim {
 			out = append(out, curr)
-			curr = curr[:0]
+			curr = *new(Ts)
 			continue
 		}
-		curr = append(curr, t)
+		curr = append(curr, in)
 	}
 	return out
 }

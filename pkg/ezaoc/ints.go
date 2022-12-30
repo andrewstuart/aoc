@@ -36,7 +36,7 @@ func MaxOf[T any, U constraints.Ordered](ts []T, value func(T) U) (int, U) {
 	u := value(ts[0])
 	for i, t := range ts {
 		ft := value(t)
-		if ft < u {
+		if ft > u {
 			idx = i
 			u = ft
 		}
