@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
+	"github.com/samber/lo"
 )
 
 func main() {
@@ -38,11 +39,13 @@ func aoc(r io.Reader) int {
 	for _, input := range inputs {
 		a, b := split(input)
 		s := ezaoc.SetFrom(a)
+		s2 := ezaoc.Set[rune]{}
 		for _, ch := range b {
 			if s.Contains(ch) {
-				count += pri(ch)
+				s2.Add(ch)
 			}
 		}
+		count += ezaoc.Sum(lo.Map(s2.Items(), func(r rune, _ int) int { return pri(r) }))
 	}
 
 	return count
