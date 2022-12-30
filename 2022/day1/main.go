@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
@@ -42,28 +43,19 @@ func aoc(r io.Reader) int {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("inputs = %+v\n", inputs)
+	// 	fmt.Printf("inputs = %+v\n", inputs)
 
 	elves := ezaoc.Reslice(inputs, -1)
 
-	fmt.Printf("elves = %+v\n", elves)
-	fmt.Printf("len(elves) = %+v\n", len(elves))
-
-	i, max := ezaoc.MaxOf(elves, func(cals []int) int {
-		ct := 0
-		for _, i := range cals {
-			ct += i
-		}
-		return ct
+	sort.Slice(elves, func(i, j int) bool {
+		return ezaoc.Sum(elves[i]) < ezaoc.Sum(elves[j])
 	})
-	fmt.Printf("i = %+v\n", i)
-	fmt.Printf("elves[i] = %+v\n", elves[i])
+	fmt.Printf("elves = %+v\n", ezaoc.LastN(elves, 3))
 
 	// mm := ezaoc.MaxOf(max, func(i int) int { return i })
 	// // Add challenge logic here probably
 	// count := 0
 	// spew.Dump(next)
 	// count = len(next)
-
-	return max
+	return ezaoc.Sum(ezaoc.FMap(ezaoc.LastN(elves, 3), ezaoc.Sum))
 }
