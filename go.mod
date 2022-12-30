@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/alecthomas/assert v1.0.0
 	github.com/davecgh/go-spew v1.1.1
+	github.com/samber/lo v1.37.0
 	golang.org/x/exp v0.0.0-20221230162634-c8adb6e14cba
 )
 

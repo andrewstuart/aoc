@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	f, err := os.OpenFile("../input", os.O_RDONLY, 0400)
+	f, err := os.OpenFile("./input.txt", os.O_RDONLY, 0400)
 	if err != nil {
 		log.Fatal(err)
 	}

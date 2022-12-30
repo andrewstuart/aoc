@@ -14,7 +14,7 @@ import (
 type RPS int
 
 const (
-	Rock RPS = iota + 1
+	Rock RPS = iota
 	Paper
 	Scissors
 
@@ -24,8 +24,8 @@ const (
 )
 
 type Strat struct {
-	Them, Me RPS
-	Result   int
+	Them   RPS
+	Result int
 }
 
 func parse(st string) *Strat {
@@ -41,27 +41,35 @@ func parse(st string) *Strat {
 	}
 	switch fs[1] {
 	case "X":
-		s.Me = Rock
+		s.Result = Loss
 	case "Y":
-		s.Me = Paper
+		s.Result = Draw
 	case "Z":
-		s.Me = Scissors
+		s.Result = Win
 	}
 	return &s
 }
 
 func (s Strat) outcome() int {
-	if s.Them == s.Me {
-		return Draw
+	return s.Result
+}
+
+func (s Strat) me() RPS {
+	switch s.outcome() {
+	case Win:
+		return RPS((s.Them + 1) % 3)
+	case Loss:
+		o := s.Them - 1
+		if o < 0 {
+			return Scissors
+		}
+		return RPS(o)
 	}
-	if s.Me == Rock && s.Them == Scissors || int(s.Me)-2 == int(s.Them) {
-		return Win
-	}
-	return Loss
+	return s.Them
 }
 
 func (s Strat) score() int {
-	return int(s.Me) + s.outcome()
+	return int(s.me()+1) + s.outcome()
 }
 
 func main() {
