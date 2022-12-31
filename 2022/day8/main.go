@@ -39,14 +39,18 @@ func aoc(r io.Reader) int {
 	ezaoc.VisitCells(inputs, func(c ezaoc.Cell[int]) error {
 		scans := append(split(inputs[c.I], c.J), split(ezaoc.RawCols(inputs, c.J), c.I)...)
 
+		tot := 1
 		for _, scan := range scans {
-			higher := lo.CountBy(scan, func(ht int) bool {
+			_, idx, _ := lo.FindIndexOf(scan, func(ht int) bool {
 				return ht >= c.Value
 			})
-			if higher == 0 {
-				count++
-				return nil
+			if idx < 0 {
+				idx = len(scan) - 1
 			}
+			tot *= (idx + 1)
+		}
+		if tot > count {
+			count = tot
 		}
 		return nil
 	})
@@ -54,7 +58,17 @@ func aoc(r io.Reader) int {
 }
 
 func split[T any](ts []T, n int) [][]T {
-	return [][]T{ts[:n], ts[n+1:]}
+	return [][]T{reverse(ts[:n]), ts[n+1:]}
+}
+
+func reverse[T any](input []T) []T {
+	var output []T
+
+	for i := len(input) - 1; i >= 0; i-- {
+		output = append(output, input[i])
+	}
+
+	return output
 }
 
 func splitExcept[T any](n int) func(_ T, idx int) (bool, bool) {
