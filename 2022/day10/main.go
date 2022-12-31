@@ -2,10 +2,13 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"os"
+	"strings"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
 )
@@ -19,7 +22,7 @@ func main() {
 
 	br := bufio.NewReader(f)
 
-	log.Println(aoc(br))
+	fmt.Println(aoc(br))
 }
 
 type instruction struct {
@@ -37,7 +40,7 @@ func (i instruction) cycles() int {
 	panic("unknown type")
 }
 
-func aoc(r io.Reader) int {
+func aoc(r io.Reader) string {
 	inputs, err := ezaoc.ReadAOC(r, func(st string) (instruction, error) {
 		var x instruction
 		if st == "" {
@@ -50,12 +53,19 @@ func aoc(r io.Reader) int {
 		log.Fatal(err)
 	}
 
-	var reg, out, cycle int
+	var reg, cycle int
 	reg = 1
+	out := &bytes.Buffer{}
 	for _, in := range inputs {
-		for i := 1; i <= in.cycles(); i++ {
-			if (cycle+i+20)%40 == 0 {
-				out += reg * (cycle + i)
+		for i := 0; i < in.cycles(); i++ {
+			pix := (cycle + i) % 40
+			if math.Abs(float64(reg-pix)) < 2 {
+				fmt.Fprint(out, "#")
+			} else {
+				fmt.Fprint(out, ".")
+			}
+			if (cycle+i+1)%40 == 0 {
+				fmt.Fprintln(out)
 			}
 		}
 		cycle += in.cycles()
@@ -63,5 +73,5 @@ func aoc(r io.Reader) int {
 			reg += in.Operand
 		}
 	}
-	return out
+	return strings.TrimSpace(out.String())
 }
