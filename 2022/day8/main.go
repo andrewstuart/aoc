@@ -58,17 +58,7 @@ func aoc(r io.Reader) int {
 }
 
 func split[T any](ts []T, n int) [][]T {
-	return [][]T{reverse(ts[:n]), ts[n+1:]}
-}
-
-func reverse[T any](input []T) []T {
-	var output []T
-
-	for i := len(input) - 1; i >= 0; i-- {
-		output = append(output, input[i])
-	}
-
-	return output
+	return [][]T{ezaoc.Reverse(ts[:n]), ts[n+1:]}
 }
 
 func splitExcept[T any](n int) func(_ T, idx int) (bool, bool) {
