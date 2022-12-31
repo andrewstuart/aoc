@@ -42,23 +42,31 @@ func aoc(r io.Reader) int {
 	}
 
 	visited := ezaoc.Set[cell]{}
-	var head, tail cell
+	rope := make([]cell, 10)
+	head, tail := rope[0], rope[9]
 	visited.Add(tail)
 
 	// Add challenge logic here probably
 	for _, in := range inputs {
-		switch in.Dir {
-		case "L":
-			head.I -= in.Count
-		case "R":
-			head.I += in.Count
-		case "U":
-			head.J += in.Count
-		case "D":
-			head.J -= in.Count
-		}
+		for i := 0; i < in.Count; i++ {
+			switch in.Dir {
+			case "L":
+				head.I--
+			case "R":
+				head.I++
+			case "U":
+				head.J++
+			case "D":
+				head.J--
+			}
 
-		visited.Add(tail.movesTo(head)...)
+			next := head
+			for i := range rope[1:9] {
+				rope[i].movesTo(next)
+				next = rope[i]
+			}
+			visited.Add(tail.movesTo(next)...)
+		}
 	}
 
 	return len(visited)
@@ -68,9 +76,11 @@ type cell struct {
 	I, J int
 }
 
+const dist = 1
+
 func (c *cell) movesTo(c2 cell) []cell {
 	var out []cell
-	for math.Abs(float64(c.I-c2.I)) > 1 || math.Abs(float64(c.J-c2.J)) > 1 {
+	for math.Abs(float64(c.I-c2.I)) > dist || math.Abs(float64(c.J-c2.J)) > dist {
 		next := *c
 		if c2.I > c.I {
 			next.I++
