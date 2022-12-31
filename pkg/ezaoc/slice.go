@@ -32,3 +32,21 @@ func Reslice[T any, Ts ~[]T](inputs Ts, f func(T, int) (bool, bool)) []Ts {
 	}
 	return out
 }
+
+func ResliceIncludeLastEmpty[T any, Ts ~[]T](inputs Ts, f func(T, int) (bool, bool)) []Ts {
+	var out []Ts
+	var curr Ts
+	for i, in := range inputs {
+		if split, keep := f(in, i); split {
+			if keep {
+				curr = append(curr, in)
+			}
+			out = append(out, curr)
+			curr = *new(Ts)
+			continue
+		}
+		curr = append(curr, in)
+	}
+	out = append(out, curr)
+	return out
+}
