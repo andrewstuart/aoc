@@ -2,8 +2,6 @@ package ezaoc
 
 import "fmt"
 
-// type Grid[T any] [][]T
-
 // Print2dGrid simply iterates each item and prints it out in a fmt.Print 2d
 // grid. No spacing but newlines.
 func Print2dGrid[T any](ts [][]T) {

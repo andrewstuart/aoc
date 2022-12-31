@@ -54,8 +54,10 @@ func (q *Queue[T]) Dequeue() T {
 type Set[T comparable] map[T]struct{}
 
 // Add adds an item to the set.
-func (s Set[T]) Add(t T) {
-	s[t] = struct{}{}
+func (s Set[T]) Add(t ...T) {
+	for _, t := range t {
+		s[t] = struct{}{}
+	}
 }
 
 // Remove deletes an item from a set.
