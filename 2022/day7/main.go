@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -35,10 +36,7 @@ type entry struct {
 }
 
 func (e entry) du() int {
-	if e.size > 0 {
-		return e.size
-	}
-	size := 0
+	size := e.size
 	for _, e := range e.dir {
 		size += e.du()
 	}
@@ -75,7 +73,7 @@ func newEntry(n string) *entry {
 	}
 }
 
-func aoc(r io.Reader) int {
+func readFS(r io.Reader) *entry {
 	var in cmd
 	inputs, err := ezaoc.ReadAOC(r, func(st string) (cmd, error) {
 		if st == "" {
@@ -95,15 +93,11 @@ func aoc(r io.Reader) int {
 	inputs = inputs[1:]
 
 	root := newEntry("")
-	count := 0
 	pwd := ezaoc.Stack[string]{}
 	for _, in := range inputs {
 		switch strings.Fields(in.Input)[0] {
 		case "ls":
 			dir := root.get(pwd...)
-			// if dir.dir == nil {
-			// 	dir.dir = map[string]*entry{}
-			// }
 			for _, o := range in.Output {
 				fs := strings.Fields(o)
 				if n, err := strconv.Atoi(fs[0]); err == nil {
@@ -129,7 +123,12 @@ func aoc(r io.Reader) int {
 			}
 		}
 	}
+	return root
+}
 
+func aoc(r io.Reader) int {
+	root := readFS(r)
+	count := 0
 	root.walk(func(e *entry) {
 		if e.dir == nil {
 			return
@@ -138,6 +137,7 @@ func aoc(r io.Reader) int {
 			count += e.du()
 		}
 	})
+	fmt.Printf("root.du() = %+v\n", root.du())
 
 	return count
 }
