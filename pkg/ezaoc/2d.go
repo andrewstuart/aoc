@@ -2,6 +2,8 @@ package ezaoc
 
 import "fmt"
 
+// type Grid[T any] [][]T
+
 // Print2dGrid simply iterates each item and prints it out in a fmt.Print 2d
 // grid. No spacing but newlines.
 func Print2dGrid[T any](ts [][]T) {
@@ -118,4 +120,25 @@ func VisitNonDiagNeighbors[T any](ts [][]T, f func(Cell[T], []Cell[T]) error) {
 			}
 		}
 	}
+}
+
+// Cols returns a column of ints with index n
+func Cols[T any](ts [][]T, n int) []Cell[T] {
+	col := make([]Cell[T], len(ts))
+	for i, row := range ts {
+		col[i].I = i
+		col[i].J = n
+		col[i].Value = row[n]
+	}
+	return col
+}
+
+// RawCols returns a column of type T in the 2d T array having second-dimension
+// index n
+func RawCols[T any](ts [][]T, n int) []T {
+	col := make([]T, len(ts))
+	for i, row := range ts {
+		col[i] = row[n]
+	}
+	return col
 }
