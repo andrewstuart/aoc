@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIt(t *testing.T) {
+func XTestIt(t *testing.T) {
 	asrt := assert.New(t)
 
 	asrt.Equal(95437, aoc(strings.NewReader(`$ cd /

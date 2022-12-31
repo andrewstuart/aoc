@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -77,7 +76,7 @@ func readFS(r io.Reader) *entry {
 	var in cmd
 	inputs, err := ezaoc.ReadAOC(r, func(st string) (cmd, error) {
 		if st == "" {
-			return cmd{}, io.EOF
+			return in, io.EOF
 		}
 		if strings.HasPrefix(st, "$") {
 			i := in
@@ -87,6 +86,7 @@ func readFS(r io.Reader) *entry {
 		in.Output = append(in.Output, st)
 		return in, ezaoc.ErrIgnore
 	})
+	inputs = append(inputs, in)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -126,18 +126,24 @@ func readFS(r io.Reader) *entry {
 	return root
 }
 
+const (
+	full = 70000000
+	min  = 30000000
+)
+
 func aoc(r io.Reader) int {
 	root := readFS(r)
-	count := 0
+	free := full - root.du()
+	needed := min - free
+	var smallest *entry
 	root.walk(func(e *entry) {
-		if e.dir == nil {
-			return
+		if smallest == nil {
+			smallest = e
 		}
-		if e.du() <= 100_000 {
-			count += e.du()
+		if e.du() >= needed && e.du() < smallest.du() {
+			smallest = e
 		}
 	})
-	fmt.Printf("root.du() = %+v\n", root.du())
 
-	return count
+	return smallest.du()
 }
