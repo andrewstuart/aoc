@@ -24,11 +24,44 @@ accum:
 		if err != nil && err != io.EOF {
 			return nil, err
 		}
+		st = strings.TrimSpace(st)
 		if st == "" && err == io.EOF {
 			return ts, nil
 		}
 
-		next, err := f(strings.TrimSpace(st))
+		next, err := f(st)
+		if err != nil {
+			if err != nil {
+				switch err {
+				case io.EOF: // Callees may return io.EOF to end our use of this reader.
+					return ts, nil
+				case ErrIgnore:
+					continue accum
+				default:
+					return nil, err
+				}
+			}
+			return ts, err
+		}
+		ts = append(ts, next)
+	}
+}
+
+// Raw is the same as above but doesn't trim space, for when that matters in input files.
+func RawReadAOC[T any](r io.Reader, f func(string) (T, error)) ([]T, error) {
+	br := bufio.NewReader(r)
+	var ts []T
+accum:
+	for {
+		st, err := br.ReadString('\n')
+		if err != nil && err != io.EOF {
+			return nil, err
+		}
+		if strings.TrimSpace(st) == "" && err == io.EOF {
+			return ts, nil
+		}
+
+		next, err := f(st)
 		if err != nil {
 			if err != nil {
 				switch err {
