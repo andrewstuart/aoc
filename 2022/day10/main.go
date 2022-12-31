@@ -58,8 +58,8 @@ func aoc(r io.Reader) string {
 	out := &bytes.Buffer{}
 	for _, in := range inputs {
 		for i := 0; i < in.cycles(); i++ {
-			pix := (cycle + i) % 40
-			if math.Abs(float64(reg-pix)) < 2 {
+			pxl := (cycle + i) % 40
+			if math.Abs(float64(reg-pxl)) < 2 {
 				fmt.Fprint(out, "#")
 			} else {
 				fmt.Fprint(out, ".")
