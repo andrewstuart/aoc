@@ -27,3 +27,14 @@ func LastN[T any, U ~[]T](t U, ct int) U {
 
 	return t[len(t)-ct:]
 }
+
+// Reverse returns a copy of the struct but reversed.
+func Reverse[T any](input []T) []T {
+	var output []T
+
+	for i := len(input) - 1; i >= 0; i-- {
+		output = append(output, input[i])
+	}
+
+	return output
+}
