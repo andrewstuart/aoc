@@ -45,7 +45,7 @@ func aoc(r io.Reader) int {
 
 	// 	fmt.Printf("inputs = %+v\n", inputs)
 
-	elves := ezaoc.Reslice(inputs, -1)
+	elves := ezaoc.Reslice(inputs, ezaoc.ResliceDelim(-1))
 
 	sort.Slice(elves, func(i, j int) bool {
 		return ezaoc.Sum(elves[i]) < ezaoc.Sum(elves[j])

@@ -52,9 +52,10 @@ func (s stacks) move(n, from, to int) {
 	tmp := make([]string, n)
 	copy(tmp, ezaoc.LastN(s[from], n))
 	s[from] = s[from][:len(s[from])-n]
-	for i := len(tmp) - 1; i >= 0; i-- {
-		s[to] = append(s[to], tmp[i])
-	}
+	s[to] = append(s[to], tmp...)
+	// for i := len(tmp) - 1; i >= 0; i-- {
+	// 	s[to] = append(s[to], tmp[i])
+	// }
 }
 
 func readStacks(r io.Reader) [][]string {
