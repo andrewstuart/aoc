@@ -39,8 +39,6 @@ func Read[T any](r io.Reader, delim string, f func(string) (T, error)) ([]T, err
 accum:
 	for {
 		st, err := readMultiString(br, delim)
-		fmt.Printf("st = %+v\n", st)
-		fmt.Printf("delim = %+v\n", delim)
 		if err != nil && err != io.EOF {
 			return nil, err
 		}
