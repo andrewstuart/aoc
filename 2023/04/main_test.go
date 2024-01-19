@@ -16,14 +16,6 @@ func TestAOC(t *testing.T) {
 	rq.NoError(err)
 
 	out := aoc(bufio.NewReader(f))
-	asrt.Equal(467835, out)
-}
 
-func TestCheckRow(t *testing.T) {
-	asrt := assert.New(t)
-	data := []string{"....*"}
-	asrt.True(checkRow(data, 0, 0, 4))
-
-	data = []string{"*...."}
-	asrt.True(checkRow(data, 0, 1, 4))
+	asrt.Equal(13, out)
 }
