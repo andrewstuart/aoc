@@ -4,7 +4,7 @@ import "fmt"
 
 // Print2dGrid simply iterates each item and prints it out in a fmt.Print 2d
 // grid. No spacing but newlines.
-func Print2dGrid[T any](ts [][]T) {
+func Print2dGrid[T any, Ts []T](ts []Ts) {
 	for _, row := range ts {
 		for _, cell := range row {
 			fmt.Print(cell)
@@ -28,7 +28,7 @@ func Make2DSlice[T any](i, j int, f func(i, j int) T) [][]T {
 }
 
 // IsInBounds returns for any 2d slice whether the given ints are in bounds
-func IsInBounds[T any](ts [][]T, i, j int) bool {
+func IsInBounds[T any, Ts ~[]T](ts []Ts, i, j int) bool {
 	gtZero := i >= 0 && j >= 0
 	inBounds := i < len(ts) && len(ts) > 0 && j < len(ts[0])
 	return gtZero && inBounds
