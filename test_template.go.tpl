@@ -16,6 +16,6 @@ func TestAOC(t *testing.T) {
 	rq.NoError(err)
 
 	out := aoc(bufio.NewReader(f))
-  // TODO replace assert expected value here
-	asrt.Equal(100, out)
+
+	asrt.Equal({{ .Expected }}, out)
 }
