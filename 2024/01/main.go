@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -44,17 +45,36 @@ func aoc(r io.Reader) int {
 		bs[i] = v[1]
 	}
 
+	fmt.Println(as, bs)
+
 	slices.Sort(as)
 	slices.Sort(bs)
 	// Add challenge logic here probably
 	dist := 0
-	for i := range as {
-		d := as[i] - bs[i]
-		if d < 0 {
-			d = -d
-		}
-		dist += d
+	for _, n := range as {
+		ct := findCount(n, bs)
+		dist += n * ct
+		fmt.Println("n:", n, "ct:", ct, "mult:", n*ct, "dist:", dist)
+		// d := as[i] - bs[i]
+		// if d < 0 {
+		// 	d = -d
+		// }
+		// dist += d
 	}
 
 	return dist
+}
+
+func findCount(a int, sorted []int) int {
+	ct := 0
+	i := slices.Index(sorted, a)
+	if i >= 0 {
+		for j := i; j < len(sorted); j++ {
+			if sorted[j] != a {
+				break
+			}
+			ct++
+		}
+	}
+	return ct
 }
