@@ -1,4 +1,4 @@
-This is my repo for aoc2021.
+This is my repo for aoc.
 
 I'm using [my fork of aocdl](https://github.com/andrewstuart/advent-of-code-downloader) to simplify the creation of
 each day's input file and tests. e.g. `mkdir -p 2021/day12 && aocdl  -output
