@@ -40,24 +40,25 @@ func aoc(r io.Reader) int {
 	safe := 0
 
 	for _, in := range inputs {
-		if check(in) {
+		if check(in, 1) || check(in[1:], 0) || check(append(in[:1], in[2:]...), 0) {
 			safe++
 		}
 	}
 	return safe
 }
 
-func check(in []int) bool {
+func check(in []int, badLimit int) bool {
+	if badLimit < 0 {
+		return false
+	}
+	if len(in) < 2 {
+		panic("bad input")
+	}
 	last := in[0]
 	dir := in[1] - last // used to test that direction doesn't change
 	bad := 0
-	for j, each := range in[1:] {
-		if j == 1 && bad == 1 {
-			if check(in[1:]) {
-				return true
-			}
-		}
-		if bad > 1 {
+	for _, each := range in[1:] {
+		if bad > badLimit {
 			break
 		}
 
@@ -74,8 +75,8 @@ func check(in []int) bool {
 		}
 		last = each
 	}
-	if bad > 1 {
+	if bad > badLimit {
 		lg.Warn().Any("level", in).Int("bad", bad).Msg("unsafe")
 	}
-	return bad <= 1
+	return bad <= badLimit
 }
