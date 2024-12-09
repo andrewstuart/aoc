@@ -12,7 +12,10 @@ func ResliceGroupN[T any](n int) func(T, int) (bool, bool) {
 	}
 }
 
-// Reslice takes a slice of comparable types and turns it into a 2d slice
+// Reslice takes a slice and a function that returns a boolean and a boolean.
+// It returns a slice of slices where the input slice is split at the points
+// where the function returns true. If the second boolean is true, the element
+// that caused the split is included in the new slice.
 func Reslice[T any, Ts ~[]T](inputs Ts, f func(T, int) (bool, bool)) []Ts {
 	var out []Ts
 	var curr Ts

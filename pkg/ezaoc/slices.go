@@ -1,7 +1,7 @@
 package ezaoc
 
 // FMap is map operation across a slice using a mapping func
-func FMap[T, T2 any, U ~[]T, F func(T) T2](u U, f F) []T2 {
+func FMap[T, T2 any, U ~[]T](u U, f func(T) T2) []T2 {
 	var out []T2
 	for _, n := range u {
 		out = append(out, f(n))
@@ -28,7 +28,7 @@ func LastN[T any, U ~[]T](t U, ct int) U {
 	return t[len(t)-ct:]
 }
 
-// Reverse returns a copy of the struct but reversed.
+// Reverse returns a copy of the input slice in reverse order.
 func Reverse[T any](input []T) []T {
 	var output []T
 

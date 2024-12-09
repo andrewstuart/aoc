@@ -13,6 +13,17 @@ func Print2dGrid[T any, Ts []T](ts []Ts) {
 	}
 }
 
+// Print2dGridWithNumbers prints out a 2d grid with row and column numbers.
+func Print2dGridWithNumbers[T any, Ts []T](ts []Ts) {
+	for i, row := range ts {
+		fmt.Printf("%d: ", i)
+		for j, cell := range row {
+			fmt.Printf("%d:%v ", j, cell)
+		}
+		fmt.Println()
+	}
+}
+
 // Make2DSlice creates a 2d slice of type T and length ixj, and sets the i,jth
 // elements of the 2d array to the result of f(i,j). Attempting here to follow
 // more of an existing Go idiom (sort.Slice) than something purely generic.
@@ -139,4 +150,72 @@ func RawCols[T any](ts [][]T, n int) []T {
 		col[i] = row[n]
 	}
 	return col
+}
+
+type Direction int
+
+const (
+	Unknown Direction = iota
+	Up
+	Down
+	Left
+	Right
+	UpLeft
+	UpRight
+	DownLeft
+	DownRight
+)
+
+func (d Direction) String() string {
+	switch d {
+	case Up:
+		return "Up"
+	case Down:
+		return "Down"
+	case Left:
+		return "Left"
+	case Right:
+		return "Right"
+	case UpLeft:
+		return "UpLeft"
+	case UpRight:
+		return "UpRight"
+	case DownLeft:
+		return "DownLeft"
+	case DownRight:
+		return "DownRight"
+	}
+	return "Unknown"
+}
+
+var AllDirections = []Direction{Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight}
+
+func GetCellsInDirection[T any](ts [][]T, d Direction, n, m, count int) []Cell[T] {
+	var out []Cell[T]
+	if count == 0 {
+		return out
+	}
+	if !IsInBounds(ts, n, m) {
+		return out
+	}
+	out = append(out, Cell[T]{I: n, J: m, Value: ts[n][m]})
+	switch d {
+	case Up:
+		return append(out, GetCellsInDirection(ts, d, n-1, m, count-1)...)
+	case Down:
+		return append(out, GetCellsInDirection(ts, d, n+1, m, count-1)...)
+	case Left:
+		return append(out, GetCellsInDirection(ts, d, n, m-1, count-1)...)
+	case Right:
+		return append(out, GetCellsInDirection(ts, d, n, m+1, count-1)...)
+	case UpLeft:
+		return append(out, GetCellsInDirection(ts, d, n-1, m-1, count-1)...)
+	case UpRight:
+		return append(out, GetCellsInDirection(ts, d, n-1, m+1, count-1)...)
+	case DownLeft:
+		return append(out, GetCellsInDirection(ts, d, n+1, m-1, count-1)...)
+	case DownRight:
+		return append(out, GetCellsInDirection(ts, d, n+1, m+1, count-1)...)
+	}
+	return out
 }
