@@ -65,22 +65,22 @@ func aoc(r io.Reader) int {
 	}
 	count := 0
 
-ups:
+allUpdates:
 	for _, up := range updates {
+		// fmt.Println(up)
 		s := ezaoc.Set[int]{}
 		for _, page := range up {
 			for _, seen := range order[page] {
 				if s.Contains(seen) {
-					continue ups
+					continue allUpdates
 				}
 			}
 			s.Add(page)
 		}
 
-		count += up[len(up)/2+1]
+		mid := up[len(up)/2]
+		count += mid
 	}
-
-	count = len(inputs)
 
 	return count
 }
