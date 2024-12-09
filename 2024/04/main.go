@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -37,22 +38,38 @@ func aoc(r io.Reader) int {
 
 	count := 0
 	ezaoc.VisitCells(inputs, func(c ezaoc.Cell[string]) error {
-		// fmt.Println(c)
-		for _, dir := range ezaoc.AllDirections {
-			cs := ezaoc.GetCellsInDirection(inputs, dir, c.I, c.J, len(word))
-			content := ""
-			for _, c := range cs {
-				content += c.Value
-			}
-			if content == word {
-				count++
-			}
-			// fmt.Printf("x: %d, y: %d, dir: %s, content: %s\n", c.I, c.J, dir, content)
+		if checkX(inputs, "MAS", c.I, c.J) {
+			// fmt.Println(c.I, c.J, c.Value)
+			count++
 		}
 		return nil
 	})
 
-	// 	ezaoc.Print2dGridWithNumbers(inputs)
+	// ezaoc.Print2dGrid(inputs)
+	// ezaoc.Print2dGridWithNumbers(inputs)
 
 	return count
+}
+
+func checkX(inputs [][]string, s string, i, j int) bool {
+	return checkDirEitherWay(inputs, s, i, j, ezaoc.UpLeft) && checkDirEitherWay(inputs, s, i, j, ezaoc.DownLeft)
+}
+
+func checkDirEitherWay(inputs [][]string, s string, i, j int, d ezaoc.Direction) bool {
+	return checkDir(inputs, s, i, j, d) || checkDir(inputs, s, i, j, d.Opposite())
+}
+
+func checkDir(inputs [][]string, s string, i, j int, d ezaoc.Direction) bool {
+	c := ezaoc.GetCellsInDirection(inputs, d, i, j, 2)
+	if len(c) < 2 {
+		return false
+	}
+
+	cs := ezaoc.GetCellsInDirection(inputs, d.Opposite(), c[1].I, c[1].J, len(s))
+
+	chk := ""
+	for _, v := range cs {
+		chk += v.Value
+	}
+	return chk == s
 }
