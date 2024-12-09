@@ -22,22 +22,21 @@ func main() {
 	log.Println(aoc(br))
 }
 
-func aoc(r io.Reader) (int) {
+func aoc(r io.Reader) int {
 	inputs, err := ezaoc.ReadAOC(r, func(st string) (string, error) {
-    if st == "" {
-      return st, io.EOF
-    }
+		if st == "" {
+			return st, io.EOF
+		}
 		return st, nil
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-
-  // Add challenge logic here probably
-  count := 0
+	// Add challenge logic here probably
+	count := 0
 	spew.Dump(inputs)
-  count = len(inputs)
+	count = len(inputs)
 
 	return count
 }

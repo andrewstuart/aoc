@@ -188,34 +188,60 @@ func (d Direction) String() string {
 	return "Unknown"
 }
 
-var AllDirections = []Direction{Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight}
+func (d Direction) Opposite() Direction {
+	switch d {
+	case Up:
+		return Down
+	case Down:
+		return Up
+	case Left:
+		return Right
+	case Right:
+		return Left
+	case UpLeft:
+		return DownRight
+	case UpRight:
+		return DownLeft
+	case DownLeft:
+		return UpRight
+	case DownRight:
+		return UpLeft
+	}
+	return Unknown
+}
 
-func GetCellsInDirection[T any](ts [][]T, d Direction, n, m, count int) []Cell[T] {
+var (
+	AllDirections = []Direction{Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight}
+	AllDiagonals  = []Direction{UpLeft, UpRight, DownLeft, DownRight}
+	AllCardinals  = []Direction{Up, Down, Left, Right}
+)
+
+func GetCellsInDirection[T any](ts [][]T, d Direction, i, j, count int) []Cell[T] {
 	var out []Cell[T]
 	if count == 0 {
 		return out
 	}
-	if !IsInBounds(ts, n, m) {
+	if !IsInBounds(ts, i, j) {
 		return out
 	}
-	out = append(out, Cell[T]{I: n, J: m, Value: ts[n][m]})
+	out = append(out, Cell[T]{I: i, J: j, Value: ts[i][j]})
 	switch d {
 	case Up:
-		return append(out, GetCellsInDirection(ts, d, n-1, m, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i-1, j, count-1)...)
 	case Down:
-		return append(out, GetCellsInDirection(ts, d, n+1, m, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i+1, j, count-1)...)
 	case Left:
-		return append(out, GetCellsInDirection(ts, d, n, m-1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i, j-1, count-1)...)
 	case Right:
-		return append(out, GetCellsInDirection(ts, d, n, m+1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i, j+1, count-1)...)
 	case UpLeft:
-		return append(out, GetCellsInDirection(ts, d, n-1, m-1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i-1, j-1, count-1)...)
 	case UpRight:
-		return append(out, GetCellsInDirection(ts, d, n-1, m+1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i-1, j+1, count-1)...)
 	case DownLeft:
-		return append(out, GetCellsInDirection(ts, d, n+1, m-1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i+1, j-1, count-1)...)
 	case DownRight:
-		return append(out, GetCellsInDirection(ts, d, n+1, m+1, count-1)...)
+		return append(out, GetCellsInDirection(ts, d, i+1, j+1, count-1)...)
 	}
 	return out
 }
