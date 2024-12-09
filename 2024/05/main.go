@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
@@ -65,8 +67,9 @@ func aoc(r io.Reader) int {
 	}
 	count := 0
 
+	good := ezaoc.Set[int]{}
 allUpdates:
-	for _, up := range updates {
+	for i, up := range updates {
 		// fmt.Println(up)
 		s := ezaoc.Set[int]{}
 		for _, page := range up {
@@ -78,8 +81,21 @@ allUpdates:
 			s.Add(page)
 		}
 
-		mid := up[len(up)/2]
-		count += mid
+		good.Add(i)
+	}
+
+	for i, up := range updates {
+		if good.Contains(i) {
+			continue
+		}
+
+		sort.Slice(up, func(i, j int) bool {
+			ord := order[up[i]]
+			return slices.Contains(ord, up[j])
+		})
+
+		count += up[len(up)/2]
+
 	}
 
 	return count
