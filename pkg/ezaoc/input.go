@@ -49,17 +49,14 @@ accum:
 
 		next, err := f(st)
 		if err != nil {
-			if err != nil {
-				switch err {
-				case io.EOF: // Callees may return io.EOF to end our use of this reader.
-					return ts, nil
-				case ErrIgnore:
-					continue accum
-				default:
-					return nil, err
-				}
+			switch err {
+			case io.EOF: // Callees may return io.EOF to end our use of this reader.
+				return ts, nil
+			case ErrIgnore:
+				continue accum
+			default:
+				return nil, err
 			}
-			return ts, err
 		}
 		ts = append(ts, next)
 	}
