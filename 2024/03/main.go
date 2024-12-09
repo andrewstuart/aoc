@@ -29,12 +29,25 @@ func aoc(r io.Reader) int {
 	bs, _ := io.ReadAll(r)
 	input := string(bs)
 
-	re := regexp.MustCompile(`(mul\(\d+\,\d+\)|do()|don't())`)
+	re := regexp.MustCompile(`(mul\(\d+\,\d+\)|do\(\)|don't\(\))`)
 
 	muls := re.FindAllString(input, -1)
 	lg.Info().Msgf("muls: %v", muls)
 	tot := 0
+	do := true
 	for _, m := range muls {
+		if m == "do()" {
+			do = true
+			continue
+		}
+		if !do {
+			continue
+		}
+		if m == "don't()" {
+			do = false
+			continue
+		}
+
 		var a, b int
 		fmt.Sscanf(m, "mul(%d,%d)", &a, &b)
 		tot += a * b
