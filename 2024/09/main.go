@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -24,6 +25,7 @@ func main() {
 type file struct {
 	id     int
 	blocks int
+	start  int
 }
 
 func aoc(r io.Reader) int {
@@ -34,12 +36,12 @@ func aoc(r io.Reader) int {
 	ins := inputs[0]
 
 	count := 0
-	files := map[int]file{}
+	files := map[int]*file{}
 	var blocks []int
 	for i, in := range ins {
 		if i%2 == 0 {
 			id := i / 2
-			files[in] = file{id: id, blocks: in}
+			files[id] = &file{id: id, blocks: in, start: len(blocks)}
 			blk := make([]int, in)
 			fill(blk, id)
 			blocks = append(blocks, blk...)
@@ -50,23 +52,51 @@ func aoc(r io.Reader) int {
 		blocks = append(blocks, blk...)
 	}
 
+	print(blocks)
 	blks := make([]int, len(blocks))
 	copy(blks, blocks)
 
-	i, j := 0, len(blks)-1
+	i := 0
+	maxID := len(files) - 1
 	for {
+		// don't go out of bounds
+		if i >= len(blks) {
+			break
+		}
+		// don't overwrite files
 		if blks[i] != -1 {
 			i++
 			continue
 		}
-		if blks[j] == -1 {
-			j--
-			continue
+
+		// find the number of free blocks
+		free := 0
+		for i+free < len(blks) && blks[i+free] == -1 {
+			free++
 		}
-		if i > j {
+
+		print(blks)
+		fmt.Println(free)
+
+		found := false
+		// find the largest file ID with a small enough size to fit
+		for jj := maxID; jj > 0; jj-- {
+			f, ok := files[jj]
+			if !ok || f.blocks > free || f.start <= i {
+				continue
+			}
+			found = true
+			for ii := 0; ii < f.blocks; ii++ {
+				blks[i+ii] = f.id
+				blks[f.start+ii] = -1
+			}
+			i += f.blocks
+			delete(files, f.id)
 			break
 		}
-		blks[i], blks[j] = blks[j], blks[i]
+		if !found {
+			i++
+		}
 	}
 
 	for i, id := range blks {
@@ -77,6 +107,17 @@ func aoc(r io.Reader) int {
 	}
 
 	return count
+}
+
+func print(is []int) {
+	for _, i := range is {
+		if i == -1 {
+			fmt.Print(".")
+			continue
+		}
+		fmt.Printf("%d", i)
+	}
+	fmt.Println()
 }
 
 func fill(bs []int, fill int) {
