@@ -64,6 +64,9 @@ type Cell[T any] struct {
 // Set should be used with the orignal slice to avoid panics, and updates the
 // in the Cell index to that passed as a parameter.
 func (c Cell[T]) Set(ts [][]T, to T) {
+	if !IsInBounds(ts, c.I, c.J) {
+		return
+	}
 	ts[c.I][c.J] = to
 }
 
