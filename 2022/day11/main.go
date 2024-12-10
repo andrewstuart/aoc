@@ -75,7 +75,7 @@ func (m *Monkey) inspect() []int {
 }
 
 func aoc(r io.Reader) int {
-	monkeys, err := ezaoc.Read(r, "\n\n", func(st string) (Monkey, error) {
+	_, err := ezaoc.Read(r, "\n\n", func(st string) (Monkey, error) {
 		var m Monkey
 		if st == "" {
 			return m, io.EOF
