@@ -49,14 +49,14 @@ func aoc(r io.Reader) int {
 			for _, node2 := range nodes[i+1:] {
 				iDiff, jDiff := ezaoc.ReduceToCoprime(node.I-node2.I, node.J-node2.J)
 				// direction 1
-				c1 := ezaoc.Cell[string]{I: node.I + iDiff, J: node.J + jDiff}
+				c1 := ezaoc.Cell[string]{I: node.I, J: node.J}
 				for ezaoc.IsInBounds(inputs, c1.I, c1.J) {
 					c1.Set(inputs, "#")
 					ans.Add(c1)
 					c1 = ezaoc.Cell[string]{I: c1.I + iDiff, J: c1.J + jDiff}
 				}
 				// direction 2
-				c2 := ezaoc.Cell[string]{I: node2.I - iDiff, J: node2.J - jDiff}
+				c2 := ezaoc.Cell[string]{I: node2.I, J: node2.J}
 				for ezaoc.IsInBounds(inputs, c2.I, c2.J) {
 					c2.Set(inputs, "#")
 					ans.Add(c2)
