@@ -155,16 +155,36 @@ func RawCols[T any](ts [][]T, n int) []T {
 type Direction int
 
 const (
+	TurnLeft      = -2
+	TurnRight     = 2
+	TurnDiagLeft  = -1
+	TurnDiagRight = 1
+)
+
+const (
 	Unknown Direction = iota
 	Up
-	Down
-	Left
-	Right
-	UpLeft
 	UpRight
-	DownLeft
+	Right
 	DownRight
+	Down
+	DownLeft
+	Left
+	UpLeft
 )
+
+// Turn takes a direction and an int, and returns a new direction based on the int. It
+// ensures that we skip over the Unknown direction if a Turn results in Unknown.
+func (d Direction) Turn(t int) Direction {
+	newDir := int(d) + t
+	if newDir < 1 {
+		newDir += 8
+	}
+	if newDir > 8 {
+		newDir -= 8
+	}
+	return Direction(newDir)
+}
 
 func (d Direction) String() string {
 	switch d {

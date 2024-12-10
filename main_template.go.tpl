@@ -37,7 +37,6 @@ func aoc(r io.Reader) (int) {
   // Add challenge logic here probably
   count := 0
 	spew.Dump(inputs)
-  count = len(inputs)
 
 	return count
 }
