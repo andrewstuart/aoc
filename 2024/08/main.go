@@ -47,16 +47,20 @@ func aoc(r io.Reader) int {
 	for _, nodes := range byFreq {
 		for i, node := range nodes {
 			for _, node2 := range nodes[i+1:] {
-				iDiff, jDiff := node.I-node2.I, node.J-node2.J
+				iDiff, jDiff := ezaoc.ReduceToCoprime(node.I-node2.I, node.J-node2.J)
+				// direction 1
 				c1 := ezaoc.Cell[string]{I: node.I + iDiff, J: node.J + jDiff}
-				c2 := ezaoc.Cell[string]{I: node2.I - iDiff, J: node2.J - jDiff}
-				if ezaoc.IsInBounds(inputs, c1.I, c1.J) {
+				for ezaoc.IsInBounds(inputs, c1.I, c1.J) {
 					c1.Set(inputs, "#")
 					ans.Add(c1)
+					c1 = ezaoc.Cell[string]{I: c1.I + iDiff, J: c1.J + jDiff}
 				}
-				if ezaoc.IsInBounds(inputs, c2.I, c2.J) {
-					ans.Add(c2)
+				// direction 2
+				c2 := ezaoc.Cell[string]{I: node2.I - iDiff, J: node2.J - jDiff}
+				for ezaoc.IsInBounds(inputs, c2.I, c2.J) {
 					c2.Set(inputs, "#")
+					ans.Add(c2)
+					c2 = ezaoc.Cell[string]{I: c2.I - iDiff, J: c2.J - jDiff}
 				}
 			}
 		}

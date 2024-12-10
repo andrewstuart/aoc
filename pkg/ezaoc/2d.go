@@ -2,6 +2,25 @@ package ezaoc
 
 import "fmt"
 
+func GCD(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+func ReduceToCoprime(i, j int) (int, int) {
+	// reduce i and j by common factors until they are coprime
+	for {
+		gcd := GCD(i, j)
+		if gcd == 1 {
+			break
+		}
+		i, j = i/gcd, j/gcd
+	}
+	return i, j
+}
+
 func Copy2dSlice[T any](ts [][]T) [][]T {
 	m := make([][]T, len(ts))
 	for i, row := range ts {
