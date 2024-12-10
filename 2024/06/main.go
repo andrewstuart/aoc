@@ -39,10 +39,6 @@ func aoc(r io.Reader, print bool) int {
 		log.Fatal(err)
 	}
 
-	// if print {
-	// ezaoc.Print2dGridWithNumbers(inputs)
-	// }
-
 	var position ezaoc.Cell[string]
 	var direction ezaoc.Direction
 	ezaoc.VisitCells(inputs, func(c ezaoc.Cell[string]) error {
@@ -104,8 +100,9 @@ func aoc(r io.Reader, print bool) int {
 	// if we can add an obstacle in front that creates a loop then increment count and try again
 
 	reported := ezaoc.Set[ezaoc.Cell[string]]{}
+	tried := ezaoc.Set[step]{}
 	for _, c := range visited {
-		if c.C == start || reported.Contains(c.C) {
+		if c.C == start || tried.Contains(c) {
 			continue
 		}
 		inCopy := ezaoc.Copy2dSlice(inputs)
@@ -115,14 +112,14 @@ func aoc(r io.Reader, print bool) int {
 		}
 		n := next[1]
 		n.Set(inCopy, "O")
-		v, err := simulate(inCopy, start, startDir, print)
+		_, err := simulate(inCopy, start, startDir, print)
 		if err == ErrFoundLoop {
 			reported.Add(n)
-			fmt.Println("Loop found by adding obstacle at", n)
-			for _, c := range v {
-				fmt.Printf("%d,%d ", c.C.I, c.C.J)
-			}
-			fmt.Println()
+			// fmt.Println("Loop found by adding obstacle at", n)
+			// for _, c := range v {
+			// 	fmt.Printf("%d,%d ", c.C.I, c.C.J)
+			// }
+			// fmt.Println()
 		}
 	}
 
