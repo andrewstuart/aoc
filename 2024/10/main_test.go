@@ -17,5 +17,5 @@ func TestAOC(t *testing.T) {
 
 	out := aoc(bufio.NewReader(f))
 
-	asrt.Equal(2858, out)
+	asrt.Equal(36, out)
 }

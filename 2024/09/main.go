@@ -52,51 +52,45 @@ func aoc(r io.Reader) int {
 		blocks = append(blocks, blk...)
 	}
 
-	print(blocks)
+	// print(blocks)
 	blks := make([]int, len(blocks))
 	copy(blks, blocks)
 
-	i := 0
-	maxID := len(files) - 1
-	for {
-		// don't go out of bounds
-		if i >= len(blks) {
-			break
+	for nextID := len(files) - 1; nextID > 0; nextID-- {
+		// print(blks)
+		size := files[nextID].blocks
+		i := findFree(blks, 0, size)
+		// fmt.Println(i, nextID, size)
+		if i == -1 {
+			continue
 		}
-		// don't overwrite files
-		if blks[i] != -1 {
-			i++
+		if i > files[nextID].start {
 			continue
 		}
 
-		// find the number of free blocks
-		free := 0
-		for i+free < len(blks) && blks[i+free] == -1 {
-			free++
+		for ii := 0; ii < size; ii++ {
+			blks[i+ii], blks[files[nextID].start+ii] = nextID, -1
 		}
 
-		print(blks)
-		fmt.Println(free)
-
-		found := false
+		// found := false
 		// find the largest file ID with a small enough size to fit
-		for jj := maxID; jj > 0; jj-- {
-			f, ok := files[jj]
-			if !ok || f.blocks > free || f.start <= i {
-				continue
-			}
-			found = true
-			for ii := 0; ii < f.blocks; ii++ {
-				blks[i+ii] = f.id
-				blks[f.start+ii] = -1
-			}
-			i += f.blocks
-			delete(files, f.id)
-			break
-		}
-		if !found {
-			i++
-		}
+		// for jj := nextID; jj > 0; jj-- {
+		// 	f, ok := files[jj]
+		// 	if !ok || f.blocks > free || f.start <= i {
+		// 		continue
+		// 	}
+		// 	found = true
+		// 	for ii := 0; ii < f.blocks; ii++ {
+		// 		blks[i+ii] = f.id
+		// 		blks[f.start+ii] = -1
+		// 	}
+		// 	i += f.blocks
+		// 	delete(files, f.id)
+		// 	break
+		// }
+		// if !found {
+		// 	i++
+		// }
 	}
 
 	for i, id := range blks {
@@ -107,6 +101,25 @@ func aoc(r io.Reader) int {
 	}
 
 	return count
+}
+
+func findFree(blocks []int, start, min int) int {
+search:
+	for i := start; i < len(blocks); i++ {
+		if blocks[i] != -1 {
+			continue
+		}
+		for j := 0; i+j < len(blocks); j++ {
+			// fmt.Println("search", i, j, min)
+			if blocks[i+j] != -1 {
+				continue search
+			}
+			if j >= min-1 {
+				return i
+			}
+		}
+	}
+	return -1
 }
 
 func print(is []int) {
