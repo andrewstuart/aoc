@@ -2,6 +2,15 @@ package ezaoc
 
 import "fmt"
 
+func Copy2dSlice[T any](ts [][]T) [][]T {
+	m := make([][]T, len(ts))
+	for i, row := range ts {
+		m[i] = make([]T, len(row))
+		copy(m[i], row)
+	}
+	return m
+}
+
 // Print2dGrid simply iterates each item and prints it out in a fmt.Print 2d
 // grid. No spacing but newlines.
 func Print2dGrid[T any, Ts []T](ts []Ts) {
