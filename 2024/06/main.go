@@ -2,10 +2,14 @@ package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"slices"
 	"strings"
+	"time"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
 )
@@ -19,10 +23,12 @@ func main() {
 
 	br := bufio.NewReader(f)
 
-	log.Println(aoc(br))
+	log.Println(aoc(br, false))
 }
 
-func aoc(r io.Reader) int {
+var ErrFoundLoop = errors.New("found loop")
+
+func aoc(r io.Reader, print bool) int {
 	inputs, err := ezaoc.ReadAOC(r, func(st string) ([]string, error) {
 		if st == "" {
 			return nil, io.EOF
@@ -33,9 +39,9 @@ func aoc(r io.Reader) int {
 		log.Fatal(err)
 	}
 
-	// Add challenge logic here probably
-	count := 0
-	ezaoc.Print2dGrid(inputs)
+	// if print {
+	// ezaoc.Print2dGridWithNumbers(inputs)
+	// }
 
 	var position ezaoc.Cell[string]
 	var direction ezaoc.Direction
@@ -48,36 +54,79 @@ func aoc(r io.Reader) int {
 		return nil
 	})
 
+	start := position
+	startDir := direction
+
 	log.Printf("Position: %v, Direction: %v\n", position, direction)
 
-	visited := ezaoc.Set[ezaoc.Cell[string]]{}
-
-	for {
-		next := ezaoc.GetCellsInDirection(inputs, direction, position.I, position.J, 2)
-		if len(next) < 2 {
-			break
-		}
-
-		inputs[position.I][position.J] = "."
-
-		// 		fmt.Println(next[1])
-
-		if next[1].Value == "#" {
-			direction = direction.Turn(ezaoc.TurnRight)
-		} else {
-			position = next[1]
-			if !visited.Contains(position) {
-				count++
-				visited.Add(position)
-			}
-		}
-		inputs[position.I][position.J] = getDirString(direction)
-		// ezaoc.Print2dGrid(inputs)
-		// fmt.Println()
-		// time.Sleep(time.Second / 2)
+	type step struct {
+		C ezaoc.Cell[string]
+		D ezaoc.Direction
 	}
 
-	return count
+	simulate := func(inputs [][]string, position ezaoc.Cell[string], direction ezaoc.Direction, print bool) ([]step, error) {
+		path := []step{}
+
+		for {
+			path = append(path, step{C: position, D: direction})
+			next := ezaoc.GetCellsInDirection(inputs, direction, position.I, position.J, 2)
+			if len(next) < 2 {
+				break
+			}
+
+			if next[1].Value == "#" || next[1].Value == "O" {
+				direction = direction.Turn(ezaoc.TurnRight)
+				// If we've been here and turned before
+				if slices.Contains(path, step{C: position, D: direction}) {
+					return path, ErrFoundLoop
+				}
+			} else {
+				inputs[position.I][position.J] = "."
+				position = next[1]
+			}
+			inputs[position.I][position.J] = getDirString(direction)
+			if print {
+				ezaoc.Print2dGrid(inputs)
+				fmt.Println()
+				time.Sleep(time.Second / 20)
+			}
+		}
+		return path, nil
+	}
+
+	t := ezaoc.Copy2dSlice(inputs)
+	visited, _ := simulate(t, position, direction, false)
+
+	// part1
+	// 	return len(lo.UniqBy(visited, func(s step) ezaoc.Cell[string] { return s.C }))
+
+	// for part 2 we want to check all the visited cells.
+	// if we can add an obstacle in front that creates a loop then increment count and try again
+
+	reported := ezaoc.Set[ezaoc.Cell[string]]{}
+	for _, c := range visited {
+		if c.C == start || reported.Contains(c.C) {
+			continue
+		}
+		inCopy := ezaoc.Copy2dSlice(inputs)
+		next := ezaoc.GetCellsInDirection(inCopy, c.D, c.C.I, c.C.J, 2)
+		if len(next) < 2 {
+			continue
+		}
+		n := next[1]
+		n.Set(inCopy, "O")
+		v, err := simulate(inCopy, start, startDir, print)
+		if err == ErrFoundLoop {
+			reported.Add(n)
+			fmt.Println("Loop found by adding obstacle at", n)
+			for _, c := range v {
+				fmt.Printf("%d,%d ", c.C.I, c.C.J)
+			}
+			fmt.Println()
+		}
+	}
+
+	return len(reported)
 }
 
 func getDirString(d ezaoc.Direction) string {
