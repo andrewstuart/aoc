@@ -5,9 +5,9 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -22,21 +22,47 @@ func main() {
 	log.Println(aoc(br))
 }
 
-func aoc(r io.Reader) (int) {
-	inputs, err := ezaoc.ReadAOC(r, func(st string) (string, error) {
-    if st == "" {
-      return st, io.EOF
-    }
-		return st, nil
+func aoc(r io.Reader) int {
+	inputs, err := ezaoc.ReadAOC(r, func(st string) ([]string, error) {
+		if st == "" {
+			return nil, io.EOF
+		}
+		return strings.Split(st, ""), nil
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	ans := ezaoc.Set[ezaoc.Cell[string]]{}
+	byFreq := map[string][]ezaoc.Cell[string]{}
 
-  // Add challenge logic here probably
-  count := 0
-	spew.Dump(inputs)
+	ezaoc.VisitCells(inputs, func(c ezaoc.Cell[string]) error {
+		if c.Value == "." {
+			return nil
+		}
+		byFreq[c.Value] = append(byFreq[c.Value], c)
+		return nil
+	})
 
-	return count
+	for _, nodes := range byFreq {
+		for i, node := range nodes {
+			for _, node2 := range nodes[i+1:] {
+				iDiff, jDiff := node.I-node2.I, node.J-node2.J
+				c1 := ezaoc.Cell[string]{I: node.I + iDiff, J: node.J + jDiff}
+				c2 := ezaoc.Cell[string]{I: node2.I - iDiff, J: node2.J - jDiff}
+				if ezaoc.IsInBounds(inputs, c1.I, c1.J) {
+					c1.Set(inputs, "#")
+					ans.Add(c1)
+				}
+				if ezaoc.IsInBounds(inputs, c2.I, c2.J) {
+					ans.Add(c2)
+					c2.Set(inputs, "#")
+				}
+			}
+		}
+	}
+
+	// Add challenge logic here probably
+
+	return len(ans)
 }
