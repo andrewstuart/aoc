@@ -8,7 +8,6 @@ import (
 	"os"
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
 	"github.com/samber/lo"
@@ -41,7 +40,7 @@ func (r Range) Overlaps(r2 Range) bool {
 }
 
 type Puzzle struct {
-	Seeds []struct{ Start, Len int }
+	Seeds []Range
 
 	Maps [][]Map
 }
@@ -167,39 +166,27 @@ func aoc(r io.Reader) int {
 	// Add challenge logic here probably
 	minim := -1
 
-	ct := 0
-	for _, s := range p.Seeds {
-		ct += s.Len
-	}
-	fmt.Println(ct)
-
-	is := make(chan int)
-	var wg sync.WaitGroup
-	for _, rng := range p.Seeds {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for j := 0; j < rng.Len; j++ {
-				// t := time.Now()
-				seed := rng.Start + j
-				for _, m := range p.Maps {
-					seed = GetMap(seed, m)
-				}
-				is <- seed
+	seeds := make([]Range, len(p.Seeds))
+	copy(seeds, p.Seeds)
+	for _, ms := range p.Maps {
+		// spew.Dump(seeds)
+		var next []Range
+		fmt.Println("maps", ms)
+		for _, m := range ms {
+			fmt.Println("map", m, "seeds", seeds)
+			for _, rng := range seeds {
+				fmt.Println("here")
+				next = append(next, m.MapRange(rng)...)
 			}
-		}()
+		}
+		seeds = next
 	}
-	go func() {
-		wg.Wait()
-		close(is)
-	}()
-	for seed := range is {
-		// fmt.Println("s", seed)
-		if minim == -1 || seed < minim {
-			minim = seed
+
+	for _, s := range seeds {
+		if minim == -1 || s.Start < minim {
+			minim = s.Start
 		}
 	}
-	fmt.Println("here")
 
 	return minim
 }
