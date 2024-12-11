@@ -57,21 +57,23 @@ func aoc(r io.Reader) int {
 		log.Fatal(err)
 	}
 
-	count := 0
+	wins := map[int]int{}
 
-	for _, card := range inputs {
-		val := 0
+	for i, card := range inputs {
+		matches := 0
 		for _, n := range card.Winning {
 			if slices.Contains(card.Mine, n) {
-				if val == 0 {
-					val = 1
-					continue
-				}
-				val *= 2
+				matches++
 			}
 		}
-		count += val
+		for j := 0; j < matches; j++ {
+			wins[i+j+1] += wins[i] + 1
+		}
 	}
 
-	return count
+	count := 0
+	for _, w := range wins {
+		count += w
+	}
+	return count + len(inputs)
 }
