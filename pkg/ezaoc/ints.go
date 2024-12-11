@@ -7,6 +7,14 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+// MapNoI takes a simpler mapper function and returns a function that can be
+// used with lo.Map.
+func MapNoI[T any, U any](f func(T) U) func(T, int) U {
+	return func(t T, _ int) U {
+		return f(t)
+	}
+}
+
 // MustAtoi is a convenience function that wraps strconv.Atoi and panics if an
 // error is encountered.
 func MustAtoi(st string) int {
