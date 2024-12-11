@@ -10,7 +10,7 @@ import (
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
 )
 
-const ticks = 25
+const ticks = 75
 
 func main() {
 	f, err := os.OpenFile("./input.txt", os.O_RDONLY, 0400)

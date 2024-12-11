@@ -7,6 +7,16 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+// MustAtoi is a convenience function that wraps strconv.Atoi and panics if an
+// error is encountered.
+func MustAtoi(st string) int {
+	i, err := strconv.Atoi(st)
+	if err != nil {
+		panic(err)
+	}
+	return i
+}
+
 // IntSlicer takes a string and returns a function to slice input strings by
 // that, and convert the results to integers.
 func IntSlicer(delimiter string) func(string) ([]int, error) {

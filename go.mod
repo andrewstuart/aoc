@@ -4,6 +4,7 @@ go 1.22rc1
 
 require (
 	github.com/alecthomas/assert v1.0.0
+	github.com/andrewstuart/p v1.1.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/rs/zerolog v1.33.0
 	github.com/samber/lo v1.47.0
