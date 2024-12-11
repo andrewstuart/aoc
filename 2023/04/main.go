@@ -5,10 +5,17 @@ import (
 	"io"
 	"log"
 	"os"
+	"slices"
+	"strings"
 
 	"github.com/andrewstuart/aoc2022/pkg/ezaoc"
-	"github.com/davecgh/go-spew/spew"
 )
+
+type Card struct {
+	Num     int
+	Winning []int
+	Mine    []int
+}
 
 func main() {
 	f, err := os.OpenFile("./input.txt", os.O_RDONLY, 0400)
@@ -23,20 +30,48 @@ func main() {
 }
 
 func aoc(r io.Reader) int {
-	inputs, err := ezaoc.ReadAOC(r, func(st string) (string, error) {
+	i := 1
+	inputs, err := ezaoc.ReadAOC(r, func(st string) (Card, error) {
 		if st == "" {
-			return st, io.EOF
+			return Card{}, io.EOF
 		}
-		return st, nil
+		fs := strings.Fields(st)
+		mine := false
+		card := Card{Num: i}
+		i++
+		for _, f := range fs[2:] {
+			if f == "|" {
+				mine = true
+				continue
+			}
+			n := ezaoc.MustAtoi(f)
+			if !mine {
+				card.Winning = append(card.Winning, n)
+			} else {
+				card.Mine = append(card.Mine, n)
+			}
+		}
+		return card, nil
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Add challenge logic here probably
 	count := 0
-	spew.Dump(inputs)
-	count = len(inputs)
+
+	for _, card := range inputs {
+		val := 0
+		for _, n := range card.Winning {
+			if slices.Contains(card.Mine, n) {
+				if val == 0 {
+					val = 1
+					continue
+				}
+				val *= 2
+			}
+		}
+		count += val
+	}
 
 	return count
 }
