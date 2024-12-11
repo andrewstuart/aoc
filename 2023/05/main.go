@@ -142,7 +142,9 @@ func aoc(r io.Reader) int {
 			return "", nil
 		}
 		if st == "" {
-			p.Maps = append(p.Maps, currentMaplist)
+			if len(currentMaplist) > 0 {
+				p.Maps = append(p.Maps, currentMaplist)
+			}
 			return "", nil
 		}
 		if strings.HasSuffix(st, "map:") {
@@ -161,7 +163,7 @@ func aoc(r io.Reader) int {
 	})
 	p.Maps = append(p.Maps, currentMaplist)
 
-	// spew.Dump(p)
+	fmt.Println(p.Maps)
 
 	// Add challenge logic here probably
 	minim := -1
@@ -172,10 +174,8 @@ func aoc(r io.Reader) int {
 		// spew.Dump(seeds)
 		var next []Range
 		fmt.Println("maps", ms)
-		for _, m := range ms {
-			fmt.Println("map", m, "seeds", seeds)
-			for _, rng := range seeds {
-				fmt.Println("here")
+		for _, rng := range seeds {
+			for _, m := range ms {
 				next = append(next, m.MapRange(rng)...)
 			}
 		}
