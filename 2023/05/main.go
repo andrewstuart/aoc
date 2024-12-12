@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -163,30 +162,17 @@ func aoc(r io.Reader) int {
 	})
 	p.Maps = append(p.Maps, currentMaplist)
 
-	fmt.Println(p.Maps)
+	slices.SortFunc(p.Seeds, func(r1, r2 Range) int {
+		return r1.Start - r2.Start
+	})
 
-	// Add challenge logic here probably
-	minim := -1
-
-	seeds := make([]Range, len(p.Seeds))
-	copy(seeds, p.Seeds)
-	for _, ms := range p.Maps {
-		// spew.Dump(seeds)
-		var next []Range
-		fmt.Println("maps", ms)
-		for _, rng := range seeds {
-			for _, m := range ms {
-				next = append(next, m.MapRange(rng)...)
-			}
-		}
-		seeds = next
+	for i := range p.Maps {
+		slices.SortFunc(p.Maps[i], func(m1, m2 Map) int {
+			return m1.Start - m2.Start
+		})
 	}
 
-	for _, s := range seeds {
-		if minim == -1 || s.Start < minim {
-			minim = s.Start
-		}
-	}
+	// now we have maps sorted by start so we can just search for a seed whose value is the lowest start
 
 	return minim
 }
